@@ -25,11 +25,6 @@ def build_dict(adata_1, adata_2):
 
     adata_1.var_names = h_list
     adata_2.var_names = h_list
-    # gene_list = list(set(gene_list_1) | set(gene_list_2))
-    # tok = ['PAD','MASK','UNK','SAT','END']
-    # lst = tok + gene_list
-    # id2gene = dict(enumerate(lst))
-    # gene2id = {v:u for u,v in id2gene.items()}
 
     all_tissues = list(set(adata_1.obs['tissue']) | set(adata_2.obs['tissue']))
     id2tissue = dict(enumerate(all_tissues))
@@ -46,14 +41,12 @@ class SingleDataset(torch.utils.data.Dataset):
     def __init__(self, adata_m,  gene2id, tissue2id=None, celltype2id=None, shuffle=True):
         super(SingleDataset, self).__init__()
         self.adata_m = adata_m
-        # self.adata_h = adata_h
+
         self.shuffle = shuffle
         self.tissue_m = self.adata_m.obs['tissue']
         self.celltype_m = self.adata_m.obs['celltype']
         self.species_m = self.adata_m.obs['species']
-        # self.tissue_h = self.adata_h.obs['tissue']
-        # self.celltype_h = self.adata_h.obs['celltype']
-        # self.species_h = self.adata_h.obs['species']
+
 
         self.tissue2id = tissue2id
         self.celltype2id = celltype2id
@@ -63,13 +56,7 @@ class SingleDataset(torch.utils.data.Dataset):
         self.m_data = adata_m.X.data
         self.n_mouse = len(self.m_indptr)-1
 
-        # self.h_indices = adata_h.X.indices
-        # self.h_indptr = adata_h.X.indptr
-        # self.h_data = adata_h.X.data
-        # self.n_human = len(self.h_indptr)-1
-
         lengths_m = self.m_indptr[1:] - self.m_indptr[:self.n_mouse]
-        # lengths_h = self.h_indptr[1:] - self.h_indptr[:self.n_human]
 
         self.lengths_all = lengths_m
 
@@ -77,9 +64,7 @@ class SingleDataset(torch.utils.data.Dataset):
 
         self.dic = dict(enumerate(self.indices))
     def __getitem__(self, index):
-        # idx = self.dic[index]
         idx = index
-        # if idx < self.n_mouse:
 
         exp = self.m_indices[self.m_indptr[idx]:self.m_indptr[idx+1]]
         val = self.m_data[self.m_indptr[idx]:self.m_indptr[idx+1]]
@@ -96,17 +81,6 @@ class SingleDataset(torch.utils.data.Dataset):
         tissue = self.tissue2id[self.tissue_m[idx]]
         celltype = self.celltype2id[self.celltype_m[idx]]
         species = self.species_m[idx]
-        # else:
-        #     idx -= self.n_mouse
-
-        #     exp = self.h_indices[self.h_indptr[idx]:self.h_indptr[idx+1]]
-        #     val = self.h_data[self.h_indptr[idx]:self.h_indptr[idx+1]]
-
-        #     if self.tissue2id == None:
-        #         return exp, val
-        #     tissue = self.tissue2id[self.tissue_h[idx]]
-        #     celltype = self.celltype2id[self.celltype_h[idx]]
-        #     species = self.species_h[idx]
 
         return exp, val, tissue, celltype, species
 
@@ -123,14 +97,6 @@ class MixDataset(torch.utils.data.Dataset):
         self.adata_h = adata_h
 
         self.shuffle = shuffle
-
-        # gene_list_m = adata_m.var_names
-        # gene_list_h = adata_h.var_names
-        # id2gene_m = dict(enumerate(gene_list_m))
-        # id2gene_h = dict(enumerate(gene_list_h))
-        # self.id2id_m = {i:gene2id[g] for i,g in id2gene_m.items()}
-        # self.id2id_h = {i:gene2id[g] for i,g in id2gene_h.items()}
-
 
         self.tissue_m = self.adata_m.obs['tissue']
         self.celltype_m = self.adata_m.obs['celltype']
@@ -166,7 +132,6 @@ class MixDataset(torch.utils.data.Dataset):
         if idx < self.n_mouse:
 
             exp = self.m_indices[self.m_indptr[idx]:self.m_indptr[idx+1]]
-            # exp = [self.id2id_m[i] for i in exp]
             val = self.m_data[self.m_indptr[idx]:self.m_indptr[idx+1]]
 
             if self.shuffle:
@@ -185,7 +150,6 @@ class MixDataset(torch.utils.data.Dataset):
             idx -= self.n_mouse
 
             exp = self.h_indices[self.h_indptr[idx]:self.h_indptr[idx+1]]
-            # exp = [self.id2id_h[i] for i in exp]
             val = self.h_data[self.h_indptr[idx]:self.h_indptr[idx+1]]
 
             if self.shuffle:
@@ -266,8 +230,6 @@ def collect_fn(data):
     for i in range(batch_size):
         length = len(data[i][0])
         max_len = max(max_len,length)
-    # max_len = len(data[-1][0])
-
 
     exp = np.zeros((batch_size, max_len))
     mask = np.ones((batch_size, max_len))
@@ -278,18 +240,6 @@ def collect_fn(data):
 
     for i in range(batch_size):
         length = len(data[i][0])
-        # try:
-        #     exp[i][:length] = data[i][0]
-        #     mask[i][:length] = 0
-        #     val[i][:length] = data[i][1]
-        #     tissue[i] = data[i][2]
-        #     celltype[i] = data[i][3]
-        #     species[i] = data[i][4]
-        # except:
-        #     print(i)
-        #     print(data[i][3])
-        #     print(length)
-        #     print(max_len)
         exp[i][:length] = data[i][0]
         mask[i][:length] = 0
         val[i][:length] = data[i][1]
@@ -376,8 +326,6 @@ def load_data(params,dir='/ibex/scratch/pangm0a/data/'):
         mca = sc.read(dir+'mca_csr_norm.h5ad')
         sc.pp.filter_cells(hcl, min_genes=100)
         sc.pp.filter_cells(mca, min_genes=100)
-        # sc.pp.filter_genes(hcl, min_cells=1000)
-        # sc.pp.filter_genes(mca, min_cells=1000)
 
         mca_ct = mca[mca.obs['celltype']==pd.Series(['T cell']).astype('category')[0]]
         mca_filtered = mca[mca.obs['celltype']!=pd.Series(['T cell']).astype('category')[0]]
@@ -402,25 +350,6 @@ def load_data(params,dir='/ibex/scratch/pangm0a/data/'):
 
 
 if __name__ == '__main__':
-
-    # paul = sc.datasets.paul15()
-    # paul.obs['tissue'] = paul.obs['paul15_clusters']
-    # paul.obs['celltype'] = paul.obs['paul15_clusters']
-    # gene_list, id2gene, gene2id, id2tissue, tissue2id, id2celltype, celltype2id = build_dict(paul, paul)
-    # dataset = Dataset(paul, gene2id, tissue2id,celltype2id)
-    # print(dataset[0])
-
-    # adata = sc.datasets.pbmc3k()
-    # sc.pp.normalize_total(adata, target_sum=10, inplace=True,exclude_highly_expressed=True)
-    # adata.X = np.ceil(adata.X)
-
-    # sc.pp.neighbors(adata)
-    # sc.tl.umap(adata,n_components=2)
-    # sc.tl.leiden(adata)
-    # # sc.pl.umap(adata, color='paul15_clusters',projection='3d')
-    # # sc.pl.umap(adata, color='paul15_clusters')
-    # sc.pl.umap(adata, color=['leiden'])
-    # sc.pl.embedding(adata,'X_umap',projection='3d')
     parser = ArgumentParser()
     parser.add_argument('--dataset', default='hcl', type=str)
     params = parser.parse_args()
