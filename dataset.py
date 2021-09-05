@@ -36,6 +36,28 @@ def build_dict(adata_1, adata_2):
 
     return m_list, adata_1, adata_2, id2tissue,tissue2id, id2celltype, celltype2id
 
+def csr2sentence(csr):
+    indices = csr.indices
+    indptr = csr.indptr
+    data = csr.data
+    all_exp = []
+    all_val = []
+    n = len(indptr)-1
+    max_len = 0
+    for i in range(n):
+        all_exp.append(indices[indptr[i]:indptr[i+1]])
+        val = data[indptr[i]:indptr[i+1]]
+        all_val.append(val)
+        max_len = max(max_len,len(val))
+    exps = np.zeros((n,max_len))
+    vals = np.zeros((n,max_len))
+    for i in range(n):
+        l = len(all_exp[i])
+        exps[i][:l] = all_exp[i]
+        vals[i][:l] = all_val[i]
+
+    return exps, vals
+
 class SingleDataset(torch.utils.data.Dataset):
     """Some Information about SingleDataset"""
     def __init__(self, adata_m,  gene2id, tissue2id=None, celltype2id=None, shuffle=True):
