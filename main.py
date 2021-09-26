@@ -6,14 +6,12 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, random_split
-import json
 import random
 from dataset import MixDataset, AdDataset, SingleDataset, collect_fn, collect_ad, load_data, build_dict
 from modules import ScT
 import warnings
 from torch.utils.data import DataLoader
 import scanpy as sc
-from torch.nn.utils import clip_grad_norm_
 import numpy as np
 import anndata as ad
 warnings.filterwarnings('ignore')
