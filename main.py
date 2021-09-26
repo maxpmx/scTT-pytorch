@@ -14,7 +14,6 @@ import warnings
 from torch.utils.data import DataLoader
 import scanpy as sc
 from torch.nn.utils import clip_grad_norm_
-import time
 import numpy as np
 import anndata as ad
 warnings.filterwarnings('ignore')
@@ -81,7 +80,7 @@ def cli_main():
     # ------------
     model = ScT(params)
     print('The number of parameters: {}'.format(count_parameters(model)))
-    model = TransformerModel.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
+    model = ScT.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
 
     # ------------
     # training
