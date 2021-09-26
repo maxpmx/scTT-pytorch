@@ -7,7 +7,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader, random_split
 import random
 from dataset import MixDataset, AdDataset, SingleDataset, collect_fn, collect_ad, load_data, build_dict
-from modules import ScT
+from module import ScT
 import warnings
 from torch.utils.data import DataLoader
 import scanpy as sc
