@@ -3,9 +3,9 @@
 # Usage
 ```python
 import torch
-from vit_pytorch import ViT
+from module import ScT
 
-v = ViT(
+v = ScT(
     image_size = 256,
     patch_size = 32,
     num_classes = 1000,
@@ -44,3 +44,9 @@ preds = v(img) # (1, 1000)
 - `emb_dropout`: float between `[0, 1]`, default `0`.  
   Embedding dropout rate.
 - `pool`: string, either `cls` token pooling or `mean` pooling
+
+
+## Pretrain
+
+
+# Citation

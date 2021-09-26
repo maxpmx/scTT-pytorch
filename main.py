@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, random_split
 import json
 import random
 from dataset import MixDataset, AdDataset, SingleDataset, collect_fn, collect_ad, load_data, build_dict
-from modules import TransformerModel
+from modules import ScT
 import warnings
 from torch.utils.data import DataLoader
 import scanpy as sc
@@ -79,7 +79,7 @@ def cli_main():
     # ------------
     # model
     # ------------
-    model = TransformerModel(params)
+    model = ScT(params)
     print('The number of parameters: {}'.format(count_parameters(model)))
     model = TransformerModel.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
 

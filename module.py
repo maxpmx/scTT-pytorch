@@ -77,27 +77,26 @@ class Block(nn.Module):
         return x
 
 
-class TransformerModel(pl.LightningModule):
-    def __init__(self, params, n_species=2):
-        super(TransformerModel, self).__init__()
-        self.embed_dim = params.embed_dim
-        self.n_heads = params.n_heads
-        self.n_layers = params.n_layers
+class ScT(pl.LightningModule):
+    def __init__(self, n_genes,n_val,n_tissue,n_celltype,pretrain=False,pooling='mean',
+                    embed_dim=768,n_heads=8,n_layers=8,lr=1e-4,n_species=2):
+        super(ScT, self).__init__()
+        self.embed_dim = embed_dim
+        self.n_heads = n_heads
+        self.n_layers = n_layers
         self.n_species = n_species
-        self.n_genes = params.n_genes
-        self.n_val = params.n_val
-        self.n_tissue = params.n_tissue
-        self.n_celltype = params.n_celltype
-        self.gene2id = params.gene2id
-        self.params = params
-        self.pretrain = params.pretrain
+        self.n_genes = n_genes
+        self.n_val = n_val
+        self.n_tissue = n_tissue
+        self.n_celltype = n_celltype
+        self.pretrain = pretrain
 
         self.token_embeddings = nn.Embedding(self.n_genes, self.embed_dim)
         self.val_embeddings = nn.Embedding(self.n_val, self.embed_dim)
         self.species_embeddings = nn.Embedding(self.n_species, self.embed_dim)
 
         self.layers = nn.ModuleList()
-        for _ in range(params.n_layers):
+        for _ in range(self.n_layers):
             self.layers.append(Block(self.embed_dim, self.n_heads))
         self.pred_layer = PredLayer(self.n_genes, self.n_val, self.embed_dim)
         self.ann_celltype = AnnLayer(self.embed_dim, self.n_celltype)
@@ -105,11 +104,11 @@ class TransformerModel(pl.LightningModule):
         self.val_head = nn.Linear(self.embed_dim, self.n_val)
         self.gene_head = nn.Linear(self.embed_dim, self.n_genes)
 
-        if params.pooling == 'max':
+        if pooling == 'max':
             self.pool = max_pool
-        elif params.pooling == 'mean':
+        elif pooling == 'mean':
             self.pool = mean_pool
-        elif params.pooling == 'sum':
+        elif pooling == 'sum':
             self.pool = sum_pool
 
     def forward(self, batch, batch_idx=0):
@@ -248,11 +247,11 @@ class TransformerModel(pl.LightningModule):
         return x_ts, prob_ts, x_ct, prob_ct, loss_ts, loss_ct, h_pool
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.params.lr)
+        return torch.optim.Adam(self.parameters(), lr=self.lr)
 
 
 if __name__ == "__main__":
     from params import get_parser
     parser = get_parser()
     params = parser.parse_args()
-    model = TransformerModel(params)
+    model = ScT(params)
