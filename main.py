@@ -26,8 +26,6 @@ def cli_main():
     # parser = ArgumentParser()
     parser = get_parser()
     parser.add_argument('--precision', default=16, type=int)
-    # parser = pl.Trainer.add_argparse_args(parser)
-    # parser = LitClassifier.add_model_specific_args(parser)
     parser.add_argument('--pretrain', default=False, type=bool)
     parser.add_argument('--shuffle', default=True, type=bool)
     params = parser.parse_args()
@@ -85,8 +83,6 @@ def cli_main():
     # ------------
 
     # wandb_logger = WandbLogger(project='SCT')
-
-    # # wandb_logger.watch(model)
 
     checkpoint_callback = ModelCheckpoint(monitor='train_loss')
     trainer = pl.Trainer(gpus=-1,
