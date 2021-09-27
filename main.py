@@ -74,7 +74,7 @@ def cli_main():
     # ------------
     # model
     # ------------
-    model = ScT(params.n_genes, params.n_val, params.n_tissue, params.n_celltype)
+    model = ScT(params.n_genes, params.n_val, params.n_celltype)
     print('The number of parameters: {}'.format(count_parameters(model)))
     model = ScT.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
 
