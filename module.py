@@ -77,7 +77,7 @@ class Block(nn.Module):
 
 
 class ScT(pl.LightningModule):
-    def __init__(self, n_genes,n_val,n_tissue,n_celltype,pretrain=False,pooling='mean',
+    def __init__(self, n_genes,n_val,n_class,pretrain=False,pooling='mean',
                     embed_dim=768,n_heads=8,n_layers=8,lr=1e-4,n_species=2):
         super(ScT, self).__init__()
         self.embed_dim = embed_dim
@@ -86,8 +86,7 @@ class ScT(pl.LightningModule):
         self.n_species = n_species
         self.n_genes = n_genes
         self.n_val = n_val
-        self.n_tissue = n_tissue
-        self.n_celltype = n_celltype
+        self.n_class = n_class
         self.pretrain = pretrain
 
         self.token_embeddings = nn.Embedding(self.n_genes, self.embed_dim)
@@ -98,8 +97,7 @@ class ScT(pl.LightningModule):
         for _ in range(self.n_layers):
             self.layers.append(Block(self.embed_dim, self.n_heads))
         self.pred_layer = PredLayer(self.n_genes, self.n_val, self.embed_dim)
-        self.ann_celltype = AnnLayer(self.embed_dim, self.n_celltype)
-        self.ann_tissue = AnnLayer(self.embed_dim, self.n_tissue)
+        self.ann_layer = AnnLayer(self.embed_dim, self.n_class)
         self.val_head = nn.Linear(self.embed_dim, self.n_val)
         self.gene_head = nn.Linear(self.embed_dim, self.n_genes)
 
@@ -159,10 +157,8 @@ class ScT(pl.LightningModule):
             pred_val = self.gene_head(h)
             loss = F.cross_entropy(pred_val.view(-1,self.n_genes),exp.T.flatten())
         else:
-            x_ct, prob_ct = self.ann_celltype(a_pool)
-            # loss_ts = F.nll_loss(x_ts, tissue)
-            loss_ct = F.nll_loss(x_ct, celltype)
-            loss = loss_ct
+            x_ct, prob_ct = self.ann_layer(a_pool)
+            loss = F.nll_loss(x_ct, celltype)
 
         self.log('train_loss', loss)
 
@@ -191,16 +187,14 @@ class ScT(pl.LightningModule):
             self.log('valid_loss', loss)
         else:
             h_pool = self.pool(h)
-            # x_ts, prob_ts = self.ann_tissue(h_pool)
-            x_ct, prob_ct = self.ann_celltype(h_pool)
-            # loss_ts = F.nll_loss(x_ts, tissue)
-            loss_ct = F.nll_loss(x_ct, celltype)
+            x_ct, prob_ct = self.ann_layer(h_pool)
+            loss = F.nll_loss(x_ct, celltype)
 
-            self.log('valid_loss', loss_ct)
+            self.log('valid_loss', loss)
             preds = torch.argmax(x_ct, dim=1)
             acc = accuracy(preds, celltype)
-            self.log('valid_acc', loss_ct)
-        # self.log('val_loss_ct', loss_ct)
+            self.log('valid_acc', loss)
+
 
     def test_step(self, batch, batch_idx=0):
         exp, val, mask, tissue, celltype, species = batch
