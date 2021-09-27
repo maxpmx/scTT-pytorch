@@ -11,7 +11,7 @@ def get_parser():
                         help="Number of Transformer heads")
     parser.add_argument("--n_val", type=int, default=11,
                         help="Number of values")
-    parser.add_argument("--lr", type=float, default=1e-3,
+    parser.add_argument("--lr", type=float, default=1e-4,
                         help="Learning rate")
     parser.add_argument("--data_path", type=str, default="",
                         help="Data path")
@@ -21,7 +21,7 @@ def get_parser():
                         help="Reference dataset")
     parser.add_argument("--experiment", type=str, default='2',
                         help="Experiment name")
-    parser.add_argument("--n_epochs", type=int, default=10,
+    parser.add_argument("--n_epochs", type=int, default=2,
                         help="Maximum epoch size")
     parser.add_argument("--log_step", type=int, default=1,
                         help="evaluation step")

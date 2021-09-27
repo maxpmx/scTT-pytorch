@@ -17,8 +17,8 @@ def build_dict(adata_1, adata_2):
     gene_list_1 = adata_1.var_names
     gene_list_2 = adata_2.var_names
 
-    m_list = list(np.load('data/m_list.npy'))
-    h_list = list(np.load('data/h_list.npy'))
+    m_list = list(np.load('../data/m_list.npy'))
+    h_list = list(np.load('../data/h_list.npy'))
 
     adata_1 = adata_1[:,m_list]
     adata_2 = adata_2[:,h_list]

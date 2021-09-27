@@ -15,7 +15,6 @@ import numpy as np
 import anndata as ad
 from utils import count_parameters
 warnings.filterwarnings('ignore')
-sc.set_figure_params(scanpy=True, dpi=300, dpi_save=300)
 
 def cli_main():
     pl.seed_everything(1234)
@@ -76,14 +75,14 @@ def cli_main():
     # ------------
     model = ScT(params.n_genes, params.n_val, params.n_celltype)
     print('The number of parameters: {}'.format(count_parameters(model)))
-    model = ScT.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
+    # model = ScT.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
 
     # ------------
     # training
     # ------------
-
-    # wandb_logger = WandbLogger(project='SCT')
-
+    
+    # wandb_logger = WandbLogger(project='ScT')
+ 
     checkpoint_callback = ModelCheckpoint(monitor='train_loss')
     trainer = pl.Trainer(gpus=-1,
                             accelerator='dp', precision=params.precision,

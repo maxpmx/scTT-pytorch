@@ -88,6 +88,7 @@ class ScT(pl.LightningModule):
         self.n_val = n_val
         self.n_class = n_class
         self.pretrain = pretrain
+        self.lr = lr
 
         self.token_embeddings = nn.Embedding(self.n_genes, self.embed_dim)
         self.val_embeddings = nn.Embedding(self.n_val, self.embed_dim)
