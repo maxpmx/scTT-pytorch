@@ -15,7 +15,7 @@ def get_parser():
                         help="Learning rate")
     parser.add_argument("--data_path", type=str, default="",
                         help="Data path")
-    parser.add_argument("--batch_size", type=int, default=32,
+    parser.add_argument("--batch_size", type=int, default=16,
                         help="Number of sentences per batch")
     parser.add_argument("--dataset", type=str, default='hcl',
                         help="Reference dataset")
@@ -27,7 +27,7 @@ def get_parser():
                         help="evaluation step")
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed")
-    parser.add_argument("--n_workers", type=int, default=16,
+    parser.add_argument("--n_workers", type=int, default=8,
                         help="DataLoader workers")
     parser.add_argument("--test", type=bool, default=False,
                         help="test")
