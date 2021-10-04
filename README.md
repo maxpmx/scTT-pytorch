@@ -11,12 +11,12 @@ sct = ScT(
     n_genes = 10000,
     n_val = 11,
     n_class = 1000,
-    pretrain=False,
+    n_species=2
     pooling='mean',
-    embed_dim=768,n_heads=8,
+    embed_dim=768,
+    n_heads=8,
     n_layers=8,
     lr=1e-4,
-    n_species=2
 )
 
 dataset = SingleDataset(adata,gene2id)
@@ -25,31 +25,24 @@ loader = DataLoader(dataset)
 sct.fit(model, loader)
 ```
 # Parameters
-- `image_size`: int.  
-  Image size. If you have rectangular images, make sure your image size is the maximum of the width and height
-- `patch_size`: int.  
-  Number of patches. `image_size` must be divisible by `patch_size`.  
-  The number of patches is: ` n = (image_size // patch_size) ** 2` and `n` **must be greater than 16**.
-- `num_classes`: int.  
+- `n_genes`: int.  
+  Amount of genes.
+- `n_val`: int.  
+  Max expression value after preprocessing.
+- `n_class`: int.  
   Number of classes to classify.
-- `dim`: int.  
-  Last dimension of output tensor after linear transformation `nn.Linear(..., dim)`.
-- `depth`: int.  
+- `n_species`: int.  
+  Number of species.
+- `embed_dim`: int.  
+  Dimension of the embeddings.
+- `n_heads`: int, default `8`.  
+   Number of heads in Multi-head Attention layer.
+- `n_layers`: int, default `8`.  
   Number of Transformer blocks.
-- `heads`: int.  
-  Number of heads in Multi-head Attention layer.
-- `mlp_dim`: int.  
-  Dimension of the MLP (FeedForward) layer.
-- `channels`: int, default `3`.  
-  Number of image's channels.
-- `dropout`: float between `[0, 1]`, default `0.`.  
-  Dropout rate.
-- `emb_dropout`: float between `[0, 1]`, default `0`.  
-  Embedding dropout rate.
-- `pool`: string, either `cls` token pooling or `mean` pooling
+- `lr`: float between `[0, 1]`, default `0.0001`.  
+  Learning rate.
+- `pooling`: string, either `max` pooling, `min` pooling or `mean` pooling
 
 
-## Pretrain
-
-
-# Citation
+# References
+https://www.biorxiv.org/content/10.1101/2020.02.05.935239v2
