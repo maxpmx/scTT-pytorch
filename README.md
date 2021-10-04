@@ -1,5 +1,5 @@
 # ScT-pytorch
-<img src="fig1.png" width="300px"></img>
+<img src="fig1.png" width="800px"></img>
 # Example
 ```python
 import torch
