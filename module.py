@@ -100,7 +100,8 @@ class ScT(pl.LightningModule):
         self.pred_layer = PredLayer(self.n_genes, self.n_val, self.embed_dim)
         self.ann_layer = AnnLayer(self.embed_dim, self.n_class)
         self.val_head = nn.Linear(self.embed_dim, self.n_val)
-        self.gene_head = nn.Linear(self.embed_dim, self.n_genes)
+        if self.pretrain:
+            self.gene_head = nn.Linear(self.embed_dim, self.n_genes)
 
         if pooling == 'max':
             self.pool = max_pool

@@ -73,7 +73,7 @@ def cli_main():
     # ------------
     # model
     # ------------
-    model = ScT(params.n_genes, params.n_val, params.n_celltype)
+    model = ScT(params.n_genes, params.n_val, params.n_celltype, n_layers=params.n_layers, embed_dim=params.embed_dim)
     print('The number of parameters: {}'.format(count_parameters(model)))
     # model = ScT.load_from_checkpoint("model/last_"+str(24)+".ckpt",params=params)
 
@@ -84,8 +84,8 @@ def cli_main():
     # wandb_logger = WandbLogger(project='ScT')
  
     checkpoint_callback = ModelCheckpoint(monitor='train_loss')
-    trainer = pl.Trainer(gpus=-1,
-                            accelerator='dp', precision=params.precision,
+    trainer = pl.Trainer(gpus=1,
+                            accelerator='ddp', precision=params.precision,
                             # logger=wandb_logger,
                             max_epochs=params.n_epochs, gradient_clip_val=0.5, callbacks=[checkpoint_callback])
     trainer.fit(model, train_loader, val_loader)
