@@ -46,5 +46,7 @@ sctt.fit(model, loader)
 
 
 # References
+Please consider citing the following reference:
+
 https://icml-compbio.github.io/icml-website-2020/2020/papers/WCBICML2020_paper_29.pdf
 https://www.biorxiv.org/content/10.1101/2020.02.05.935239v2
