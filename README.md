@@ -1,4 +1,5 @@
-# ScT-pytorch
+# ScTT-pytorch
+scTT: Translating Transcriptional Human-Mouse Single-Cell Signatures using Transformer-based Representational Learning 
 <img src="fig1.png" width="800px"></img>
 # Example
 ```python
