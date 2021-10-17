@@ -76,10 +76,10 @@ class Block(nn.Module):
         return x
 
 
-class ScT(pl.LightningModule):
+class ScTT(pl.LightningModule):
     def __init__(self, n_genes,n_val,n_class,pretrain=False,pooling='mean',
                     embed_dim=768,n_heads=8,n_layers=8,lr=1e-4,n_species=2):
-        super(ScT, self).__init__()
+        super(ScTT, self).__init__()
         self.embed_dim = embed_dim
         self.n_heads = n_heads
         self.n_layers = n_layers
@@ -249,4 +249,4 @@ if __name__ == "__main__":
     from params import get_parser
     parser = get_parser()
     params = parser.parse_args()
-    model = ScT(params)
+    model = ScTT(params)
