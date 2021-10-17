@@ -4,11 +4,11 @@ scTT: Translating Transcriptional Human-Mouse Single-Cell Signatures using Trans
 # Example
 ```python
 import torch
-from module import ScT
+from module import ScTT
 from dataset import SingleDataset
 from torch.utils.data import DataLoader
 
-sct = ScT(
+sctt = ScTT(
     n_genes = 10000,
     n_val = 11,
     n_class = 1000,
@@ -23,7 +23,7 @@ sct = ScT(
 dataset = SingleDataset(adata,gene2id)
 loader = DataLoader(dataset)
 
-sct.fit(model, loader)
+sctt.fit(model, loader)
 ```
 # Parameters
 - `n_genes`: int.  
